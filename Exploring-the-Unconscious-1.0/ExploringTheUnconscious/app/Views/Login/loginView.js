@@ -15,7 +15,6 @@ import { bindActionCreators } from 'redux';
 import * as ActionCreators from '../../Actions/authActions.js';
 import styles from './styles.js';
 import {ExploreView} from '../Explore/exploreView.js';
-
 export class LoginView extends React.Component {
 	constructor(props) {
 		super(props);
@@ -36,14 +35,17 @@ export class LoginView extends React.Component {
 		console.log(this);
 		console.log(ActionCreators);
 	}
-	static navigationOptions = {
-		title: 'Login',
-		};
+	static navigationOptions = { 
+		headerRight: <Button title="Logout"
+		disabled={!(firebase.auth().currentUser)}
+		onPress={() =>
+				this.setState(firebase.auth().signOut())	
+			}/>,
+	};
+
 
 
       submitLogin= ({email, password}) =>  {
-	           console.log(email);
-		   console.log(password);
       	           firebase.auth().signInWithEmailAndPassword(email, password)
 	      	      .then(() => {this.props.navigate('Explore')})
 		      .catch(error => { 
@@ -51,12 +53,13 @@ export class LoginView extends React.Component {
 		});
       }
 
-      submitRegistration = ({email, password}) => {
+      submitRegistration = ({email, password, navigate}) => {
 	      console.log(email);
 	      console.log(password); 
 	      firebase.auth().createUserWithEmailAndPassword(email, password)
 	      .catch(error => console.log('registered'));
       }
+
 	render() {
 		const { navigate } = this.props.navigation;
 		return(
@@ -79,7 +82,7 @@ export class LoginView extends React.Component {
 			<Button
 				title= 'Login'
 				onPress={() =>
-					this.submitLogin(this.state)
+					this.submitLogin(this.state, navigate)
 			}/>
 			<Button
 				title= 'Register'
